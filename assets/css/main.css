@@ -330,6 +330,7 @@ a:after {
 .btn-pref label {
     padding-top: 0;
     -webkit-border-radius:0 !important;
+<<<<<<< HEAD
 }
 
 #acMenu dt{
@@ -350,3 +351,6 @@ a:after {
     /*border:#666 1px solid;*/
     display:none;
     }
+=======
+}
+>>>>>>> debe05e1ffb3d0f07f162e4c5d4d1806c16dbf2b
