@@ -243,11 +243,15 @@ a:after {
     text-align: right;
 }
 
-#hato {
+.hato {
     font-size: 200px;
     color: white;
 }
 
+.hato1 {
+    font-size: 70px;
+    color: white;
+}
 
 .card {
     margin-top: 20px;
@@ -330,4 +334,27 @@ a:after {
 .btn-pref label {
     padding-top: 0;
     -webkit-border-radius:0 !important;
+<<<<<<< HEAD
 }
+
+#acMenu dt{
+    /*display:block;*/
+/*    width:200px;
+    height:50px;
+    line-height:50px;*/
+    /*text-align:center;*/
+    /*border:#666 1px solid;*/
+    cursor:pointer;
+    }
+#acMenu dd{
+    background:#f2f2f2;
+    width:400px;
+    height:30px;
+    /*line-height:50px;*/
+    text-align:center;
+    /*border:#666 1px solid;*/
+    display:none;
+    }
+=======
+}
+>>>>>>> debe05e1ffb3d0f07f162e4c5d4d1806c16dbf2b
