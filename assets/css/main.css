@@ -243,11 +243,15 @@ a:after {
     text-align: right;
 }
 
-#hato {
+.hato {
     font-size: 200px;
     color: white;
 }
 
+.hato1 {
+    font-size: 70px;
+    color: white;
+}
 
 .card {
     margin-top: 20px;
