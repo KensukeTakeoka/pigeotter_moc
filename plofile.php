@@ -1,4 +1,38 @@
-<!DOCTYPE html>
+<?php
+require('dbconnect.php');
+session_start();
+
+ // アクセスカウンタ１
+$fp = @fopen("counter1.txt", "r+") or die("Counter Error");
+ flock($fp, LOCK_EX);
+ $count = fgets($fp);
+ $count++;
+ rewind($fp);
+ fputs($fp, $count);
+ fclose($fp);
+
+		 $sql = sprintf('INSERT INTO members SET count=%d',
+		 	mysqli_real_escape_string($db, $count)
+					);
+
+ 		mysqli_query($db, $sql) or die(mysqli_error($db));
+
+// echo $count;
+
+
+ 		$sql = sprintf('SELECT * FROM posts WHERE 1');
+		$record = mysqli_query($db, $sql) or die(mysqli_error($db));
+		$table = mysqli_fetch_assoc($record);
+
+		$message = $table['message'];
+
+		if($count % 3 == 0 ){ 
+			echo $message;
+		}
+
+?>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -7,7 +41,10 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Pigeotter</title>
+    <!-- カウンター -->
+ 	<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+
+    <title>plofile</title>
 
     <!-- Bootstrap core CSS -->
     <link href="assets/css/bootstrap.css" rel="stylesheet">
@@ -19,6 +56,14 @@
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="assets/js/chart.js"></script>
 
+    <!-- アコーディオン機能 -->
+    <script>
+	$(function(){
+		$("#acMenu dt").on("click", function() {
+			$(this).next().slideToggle();
+		});
+	});
+	</script>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -28,7 +73,9 @@
   </head>
 
   <body>
+
     <div class="navbar navbar-default navbar-fixed-top">
+    	<p>あなたは<?php  print $count; ?>羽目のハトです。</p>
     	<div class="container">
 	      	<div class="row">
 	      		<div class="col-lg-4">
@@ -63,50 +110,34 @@
 		</div>
     </div><!--/.nav-collapse -->
 
-	<div class ="row">
-		<div class="col-lg-12">
-   		 <div class="card hovercard">
-        <div class="card-background" style="width:100%">
 
-        </div>
-   
-        <div class="useravatar">
-            <img alt="" src="assets/img/hato.jpg" width="100" height="50">
-        </div>
-        <div class="card-info"> <span class="card-title">はとぽっぽ</span>
-    	</div>
-    		</div>
-    	</div>
-	</div>
-
-	<!-- <div id="green"> -->
-		<div class="containerRe">
+	<div class="containerRe">
 			<div style="margin-bottom: 15px;">
 				<div class="row">
 					<div class="col-lg-2"></div>
-
 					<div class="col-lg-3 centered">
 						<img src="assets/img/hato.jpg" width="100" height="100" alt="">
 					</div>
 					
 					<div class="col-lg-5 centered">
+						
 						<span type="text" name="nickname" class="form-control">ここに投稿されたコメントが表示されます。</span>
-						<span class="glyphicon glyphicon-share-alt"><span>　　</span></span></span><span class="glyphicon glyphicon-thumbs-up"></span>
-					</div>
-					<div class="col-lg-2"></div>
-				</div>
-			</div>
-			<div style="margin-bottom: 15px;">
-				<div class="row">
-					<div class="col-lg-2"></div>
-
-					<div class="col-lg-3 centered">
-						<img src="assets/img/hato.jpg" width="100" height="100" alt="">
-					</div>
-					
-					<div class="col-lg-5 centered">
-						<span type="text" name="nickname" class="form-control">ここに投稿されたコメントが表示されます。</span>
-						<span class="glyphicon glyphicon-share-alt"></span><span>　　</span><span class="glyphicon glyphicon-thumbs-up"></span>
+						<div class="row">
+							<div class="col-lg-1"></div>
+							<div class="col-lg-10 centered">
+								<dl id="acMenu">
+									<dt><span class="glyphicon glyphicon-share-alt" style="margin-left:400px;"></span></dt>
+									<dd><textarea class="form-control" rows=""><?php if($count % 3 == 0 ){ echo $message;} ?></textarea>
+										<button class="
+										btnr" type="button"  style="float:right;">Go!</button>
+									</dd>
+								</dl>
+							</div>
+							<div class="col-lg-1 centered">
+								</span></span></span><span class="glyphicon glyphicon-thumbs-up" style="margin-top:17px;"></span>
+							</div>
+						</div>
+						
 					</div>
 					<div class="col-lg-2"></div>
 				</div>
@@ -115,54 +146,122 @@
 			<div style="margin-bottom: 15px;">
 				<div class="row">
 					<div class="col-lg-2"></div>
-
 					<div class="col-lg-3 centered">
 						<img src="assets/img/hato.jpg" width="100" height="100" alt="">
 					</div>
 					
 					<div class="col-lg-5 centered">
+						
 						<span type="text" name="nickname" class="form-control">ここに投稿されたコメントが表示されます。</span>
-						<span class="glyphicon glyphicon-share-alt"></span><span>　　</span><span class="glyphicon glyphicon-thumbs-up"></span>
+						<div class="row">
+							<div class="col-lg-1"></div>
+							<div class="col-lg-10 centered">
+								<dl id="acMenu">
+									<dt><span class="glyphicon glyphicon-share-alt" style="margin-left:400px;"></span></dt>
+									<dd><textarea class="form-control" rows="" ></textarea></dd>
+								</dl>
+							</div>
+							<div class="col-lg-1 centered">
+								</span></span></span><span class="glyphicon glyphicon-thumbs-up" style="margin-top:17px;"></span>
+							</div>
+						</div>
+						
 					</div>
 					<div class="col-lg-2"></div>
 				</div>
 			</div>
+
 
 			<div style="margin-bottom: 15px;">
 				<div class="row">
 					<div class="col-lg-2"></div>
-
 					<div class="col-lg-3 centered">
 						<img src="assets/img/hato.jpg" width="100" height="100" alt="">
 					</div>
 					
 					<div class="col-lg-5 centered">
+						
 						<span type="text" name="nickname" class="form-control">ここに投稿されたコメントが表示されます。</span>
-						<span class="glyphicon glyphicon-share-alt"></span><span>　　</span><span class="glyphicon glyphicon-thumbs-up"></span>
+						<div class="row">
+							<div class="col-lg-1"></div>
+							<div class="col-lg-10 centered">
+								<dl id="acMenu">
+									<dt><span class="glyphicon glyphicon-share-alt" style="margin-left:400px;"></span></dt>
+									<dd><textarea class="form-control" rows="" ></textarea></dd>
+								</dl>
+							</div>
+							<div class="col-lg-1 centered">
+								</span></span></span><span class="glyphicon glyphicon-thumbs-up" style="margin-top:17px;"></span>
+							</div>
+						</div>
+						
 					</div>
 					<div class="col-lg-2"></div>
 				</div>
 			</div>
+
 
 			<div style="margin-bottom: 15px;">
 				<div class="row">
 					<div class="col-lg-2"></div>
-
 					<div class="col-lg-3 centered">
 						<img src="assets/img/hato.jpg" width="100" height="100" alt="">
 					</div>
 					
 					<div class="col-lg-5 centered">
+						
 						<span type="text" name="nickname" class="form-control">ここに投稿されたコメントが表示されます。</span>
-						<span class="glyphicon glyphicon-share-alt"></span><span>　　</span><span class="glyphicon glyphicon-thumbs-up"></span>
+						<div class="row">
+							<div class="col-lg-1"></div>
+							<div class="col-lg-10 centered">
+								<dl id="acMenu">
+									<dt><span class="glyphicon glyphicon-share-alt" style="margin-left:400px;"></span></dt>
+									<dd><textarea class="form-control" rows="" ></textarea></dd>
+								</dl>
+							</div>
+							<div class="col-lg-1 centered">
+								</span></span></span><span class="glyphicon glyphicon-thumbs-up" style="margin-top:17px;"></span>
+							</div>
+						</div>
+						
 					</div>
 					<div class="col-lg-2"></div>
 				</div>
 			</div>
+
+
+			<div style="margin-bottom: 15px;">
+				<div class="row">
+					<div class="col-lg-2"></div>
+					<div class="col-lg-3 centered">
+						<img src="assets/img/hato.jpg" width="100" height="100" alt="">
+					</div>
+					
+					<div class="col-lg-5 centered">
+						
+						<span type="text" name="nickname" class="form-control">ここに投稿されたコメントが表示されます。</span>
+						<div class="row">
+							<div class="col-lg-1"></div>
+							<div class="col-lg-10 centered">
+								<dl id="acMenu">
+									<dt><span class="glyphicon glyphicon-share-alt" style="margin-left:400px;"></span></dt>
+									<dd><textarea class="form-control" rows="" ></textarea></dd>
+								</dl>
+							</div>
+							<div class="col-lg-1 centered">
+								</span></span></span><span class="glyphicon glyphicon-thumbs-up" style="margin-top:17px;"></span>
+							</div>
+						</div>
+						
+					</div>
+					<div class="col-lg-2"></div>
+				</div>
+			</div>
+
 
 		</div>
 
-	<!-- </div> -->
+	</div>
 	
 	
 	<div id="f">

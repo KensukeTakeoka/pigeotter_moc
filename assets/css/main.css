@@ -119,6 +119,15 @@ a:after {
     border-radius: 0px;
 }
 
+.btnr {
+    padding: 3px 5px;
+    margin-bottom: 0;
+    font-size: 2px;
+    border: 5px solid transparent;
+    border-radius: 0px;
+}
+
+
 .lead {
     letter-spacing: 1px;
 }
