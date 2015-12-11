@@ -83,7 +83,7 @@ if (!empty($_POST)) {
                               <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
                             </div>
                             <div class="form-group">
-                              <input type="text" class="form-control" id="email" name="email" placeholder="Email" required>
+                              <input type="text" class="form-control" id="email" name="email" placeholder="Password" required>
                             </div>
                           <button type="submit" id="login" name="login" class="btn btn-primary pull-right">Login</button>
                       </form>
