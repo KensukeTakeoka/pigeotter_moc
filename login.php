@@ -1,35 +1,7 @@
 <?php
 session_start();
 require('dbconnect.php');
-if (empty($_REQUEST['name'])){
-  print('名前を記入してください');
-
-}else{
-  print('正しく記入されています');
-}
-
-var_dump($_POST);
-// if(!isset($_SESSION['join'])){
-//   header('Location: login.php');
-//   exit();
-// }
-if (!empty($_POST)) {
-  //登録処理をする
-  $sql = sprintf('INSERT INTO members SET name="%s", email="%s",password="%s",created="%s"',
-    mysqli_real_escape_string($db, $_POST['name']),
-    mysqli_real_escape_string($db, $_POST['email']),
-    mysqli_real_escape_string($db, $_POST['password']),date('Y-m-d H:i:s'));
-    // mysqli_real_escape_string($db, $_POST['join']['image']), date('Y-m-d H:i:s'));
-  //$imageを代入すること 
-    // echo $sql;
-    mysqli_query($db, $sql) or die(mysqli_error($db));
-    unset($_SESSION['join']);
-    // $_SESSION['join']=$_POST;
-    header('Location: login.php');
-    // exit();
-}
 ?>
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -75,7 +47,7 @@ if (!empty($_POST)) {
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-area">  
-                      <form role="form" method="post">
+                      <form role="form" method="post" action="login_login.php">
                         <br style="clear:both">
                         <span style=" margin-bottom: 25px;  font-size:30px; color:#00a1e9; text-align: center ;">Login</span>
                           <!-- <h3 style="margin-bottom: 25px; text-align: center;">Login</h3> -->
@@ -83,7 +55,7 @@ if (!empty($_POST)) {
                               <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
                             </div>
                             <div class="form-group">
-                              <input type="text" class="form-control" id="email" name="email" placeholder="Password" required>
+                              <input type="password" class="form-control" id="email" name="email" placeholder="Password" required>
                             </div>
                           <button type="submit" id="login" name="login" class="btn btn-primary pull-right">Login</button>
                       </form>
@@ -92,7 +64,7 @@ if (!empty($_POST)) {
               
                   <div class="col-md-6">
                       <div class="form-area">  
-                        <form role="form" method="post">
+                        <form role="form" method="post" action="newmeber.php">
                           <br style="clear:both">
                           <span style=" margin-bottom: 25px;  font-size:30px; color:#00a1e9; text-align: center ;">New Members</span>
                             <!-- <h3 style="margin-bottom: 25px; text-align: center ;">New Members</h3> -->
@@ -103,7 +75,7 @@ if (!empty($_POST)) {
                                   <input type="text" class="form-control" id="email" name="email" placeholder="Email adress" required>                   
                                 </div>
                                 <div class="form-group">
-                                  <input type="text" class="form-control" id="password" name="password" placeholder="Pass Word" required>
+                                  <input type="password" class="form-control" id="password" name="password" placeholder="Pass Word" required>
                                 </div>
                                 <button type="submit" id="member" name="member" class="btn btn-primary pull-right">Member</button>
                         </form>
