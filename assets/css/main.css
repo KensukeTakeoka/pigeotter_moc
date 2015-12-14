@@ -286,6 +286,7 @@ a:after {
 }
 .card.hovercard .card-background {
     height: 130px;
+    background-image : url(assets/img/hato3.jpg);"
 }
 
 .card-background img {
