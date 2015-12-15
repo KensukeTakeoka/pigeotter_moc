@@ -130,79 +130,134 @@
 		</div>
     </div><!--/.nav-collapse -->
 
-	<?php while($post = mysqli_fetch_assoc($posts)): ?>
+	<?php //while($post = mysqli_fetch_assoc($posts)): ?>
 	<!-- <div id="green"> -->
-		<div class="containerRe">
+	<!-- 	<div class="containerRe"> -->
 			<!-- <div style="margin-bottom: 15px;"> -->
-				<div class="row">
+				<!-- <div class="row">
 					<div class="col-lg-2"></div>
 					<div class="col-lg-3 centered">
-						<img src="member_picture/<?php echo htmlspecialchars($post['picture']); ?>" width="100" height="100" alt="<?php //echo htmlspecialchars($post['name']); ?>" />
+						<img src="member_picture/<?php //echo htmlspecialchars($post['picture']); ?>" width="100" height="100" alt="<?php //echo htmlspecialchars($post['name']); ?>" />
 					</div>
 					<div class="col-lg-5 centered">
-					<span type="text" name="nickname" class="form-control1"><p><?php echo nl2br($post['message']); ?></p></span>
-						<div class="row">
-							<div class="col-lg-1"></div>
-
-							<form method="post" action="">
+					<span type="text" name="nickname" class="form-control1"><p><?php //echo nl2br($post['message']); ?></p></span>
+						<form method="post" action="">
 							<div class="col-lg-10 centered">
 								<dl id="acMenu">
 									<dt><span class="glyphicon glyphicon-share-alt" style="margin-left:400px;"></span></dt>
 									<dd><textarea name="reply_message" class="form-control" rows="" ></textarea>
 										<span class="input-group-btn">
 									    	<button class="btn " type="submit" >Go!</button>
-									    	<input type="hidden" name="reply_id" value="<?php echo $post['id']; ?>" />
-									    	
+									    	<input type="hidden" name="reply_id" value="<?php //echo $post['id']; ?>" />
 									    </span>
 									</dd>
 								</dl>
 							</div>
-							</form>
-
+						</form>
 							<div class="col-lg-1 centered">
 								<span class="glyphicon glyphicon-thumbs-up" style="margin-top:17px;"></span>
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-2"></div>
-				</div>
-			</div>
-	<?php endwhile; ?>				
-	
-	
-			<!-- サンプル -->
-			<!-- <div style="margin-bottom: 15px;"> -->
-				<!-- <div class="row">
-					<div class="col-lg-2"></div>
-					<div class="col-lg-3 centered">
-						<img src="assets/img/hato.jpg" width="100" height="100" alt="">
+					<br />
+					<br />
+					<div class="col-md-5"></div>
+					<div class="col-md-6">
+					<div class="col-lg-3 centered"> -->
+						<!-- <img src="member_picture/<?php //echo htmlspecialchars($post['picture']); ?>" width="100" height="100" alt="<?php //echo htmlspecialchars($post['name']); ?>" />
 					</div>
-					<div class="col-lg-5 centered">
-						<span type="text" name="nickname" class="form-control">ここに投稿されたコメントが表示されます。</span>
-						<div class="row">
-							<div class="col-lg-1"></div>
+					<div class="col-lg-6 centered">
+						<span type="text" name="nickname" class="form-control1"><p><?php  ?></p></span>
+					</div>
+					</div>
+				</div>
+		</div> -->
+
+	<?php// endwhile; ?>				
+	
+	<br />
+	<br />
+
+	<?php while($post = mysqli_fetch_assoc($posts)): ?>	
+	<div class="container">
+ 	 	<div class="row">
+ 	 	<div class="col-md-2"></div>
+    	<div class="col-md-8">
+       		<section class="comment-list">
+    		<article class="row">
+            <div class="col-md-2 col-sm-2 hidden-xs">
+              <figure class="thumbnail">
+                <img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($post['picture']); ?>" width="100" height="100" />
+                <figcaption class="text-center"><?php echo htmlspecialchars($post['name']); ?></figcaption>
+              </figure>
+            </div>
+            <div class="col-md-10 col-sm-10">
+              <div class="panel panel-default arrow left">
+                <div class="panel-body">
+                  <header class="text-left">
+                    <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> Dec 16, 2014</time>
+                  </header>
+                  <div class="comment-post">
+                    <p>
+                    <?php echo nl2br($post['message']); ?>
+                    </p>
+                  </div>
+                  <!-- <button class="btn " type="submit" >Go!</button> -->
+					<form method="post" action="">
 							<div class="col-lg-10 centered">
 								<dl id="acMenu">
 									<dt><span class="glyphicon glyphicon-share-alt" style="margin-left:400px;"></span></dt>
-									<dd><textarea class="form-control" rows="" ></textarea></dd>
+									<dd><textarea name="reply_message" class="form-control" rows style="display:inline-block;float:left;width:290px;margin-right:5px"></textarea>
+									<!-- 	<span class="input-group-btn"></span> -->
+									    	<button class="btn " type="submit" style="display:inline-block;">Go!</button>
+									    	<input type="hidden" name="reply_id" value="<?php echo $post['id']; ?>" />
+									    
+									</dd>
 								</dl>
 							</div>
-							<div class="col-lg-1 centered">
-								</span></span></span><span class="glyphicon glyphicon-thumbs-up" style="margin-top:17px;"></span>
-							</div>
-						</div>　
-					</div>
-					<div class="col-lg-2"></div>
-				</div> -->
-			<!-- </div> サンプル-->
+						</form>
+                <!--   <p class="text-right" type="submit" ><a href="#" class="btn btn-default btn-sm"><i class="fa fa-reply"></i>GO!</a></p> -->
+                  <input type="hidden" name="reply_id" value="<?php echo $post['id']; ?>" />
+                   <span class="glyphicon glyphicon-thumbs-up" ></span>
+                </div>
+              </div>
+            </div>
+             </article>
+            <article class="row">
+            <div class="col-md-9 col-sm-9 col-md-offset-1 col-md-pull-1 col-sm-offset-0">
+              <div class="panel panel-default arrow right">
+                <div class="panel-heading">Reply</div>
+                <div class="panel-body">
+                  <header class="text-right">
+                    <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> Dec 16, 2014</time>
+                  </header>
+                  <div class="comment-post">
+                    <p>
+                      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    </p>
+                  </div>
+                  <span class="glyphicon glyphicon-thumbs-up" ></span>
+                 <!--  <button class="btn " type="submit" >Go!</button>
+					<input type="hidden" name="reply_id" value="<?php //echo $post['id']; ?>" /> -->
+                 <!--  <p class="text-right"><a href="#" class="btn btn-default btn-sm"><i class="fa fa-reply"></i>GO!</a></p> -->
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2 col-sm-2 col-md-pull-1 hidden-xs">
+              <figure class="thumbnail">
+                <img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($post['picture']); ?>" width="100" height="100" />
+                <figcaption class="text-center"><?php echo htmlspecialchars($post['name']); ?></figcaption>
+              </figure>
+            </div>
 
-
-		</div>
-		<br />
-		<br />
+        	</section>
+          	</article>
+    	</div>
+    	</div>
+    </div>
+	<?php endwhile; ?>	
 		
 		
-	<!-- </div> -->
 	
 	
 	<div id="f">
