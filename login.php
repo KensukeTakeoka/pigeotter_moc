@@ -42,7 +42,6 @@ require('dbconnect.php');
                 <!-- HEADLINE -->
                 <h1 data-animated="GoIn"><b>Pigeotter</b> へようこそ</h1>
             </header>
-
               <div class="container">
                 <div class="row">
                   <div class="col-md-6">
@@ -55,7 +54,7 @@ require('dbconnect.php');
                               <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
                             </div>
                             <div class="form-group">
-                              <input type="password" class="form-control" id="email" name="email" placeholder="Password" required>
+                              <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                             </div>
                           <button type="submit" id="login" name="login" class="btn btn-primary pull-right">Login</button>
                       </form>

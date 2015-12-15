@@ -8,12 +8,13 @@ require('dbconnect.php');
 //   print('正しく記入されています');
 // }
 
-var_dump($_POST);if(!empty($_POST)) {
+// var_dump($_POST);
+if(!empty($_POST)) {
   //ログイン処理
   if ($_POST['name'] != '' && $_POST['password'] != '') {
     $sql = sprintf('SELECT * FROM members WHERE name="%s" AND password="%s"',
     mysqli_real_escape_string($db, $_POST['name']),
-    mysqli_real_escape_string($db, $_POST['password']));
+    mysqli_real_escape_string($db, sha1($_POST['password'])));
     $record = mysqli_query($db, $sql) or die (mysqli_error($db));
     if ($table = mysqli_fetch_assoc($record)) {
       //ログイン成功
