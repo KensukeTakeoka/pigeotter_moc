@@ -10,32 +10,86 @@ session_start();
 	rewind($fp);
 	fputs($fp, $count);
 	fclose($fp);
-	//------------------------------------
+	//------------アクセスカウンタ１ end-----------
 
+	//-----------投稿を取得-----------
+	$sql = sprintf('SELECT m.name, p.* FROM members m, posts p WHERE m.id=p.member_id ORDER BY p.created DESC');
+	$posts = mysqli_query($db, $sql) or die (mysqli_error($db));
+	// var_dump($posts);
 
-
-	//---------------データベースからデータを持ってくる---------------------
-	// while(){
-	// 	$sql = sprintf('SELECT * FROM posts WHERE 1');
-	// }
-
-
-
-
-
-	//------------------------------------------------------------
-
-
-	//-----------自動返信機能-----------
-	$randum_id=rand(1,6);
+	$randum_id=rand(1,45);
 	$sql = sprintf('SELECT * FROM posts WHERE id='.$randum_id);
 	$record = mysqli_query($db, $sql) or die(mysqli_error($db));
 	$table = mysqli_fetch_assoc($record);
-	$message = $table['message'];
+	$messager = $table['message'];
 
-	$sql = sprintf('SELECT * FROM members WHERE id AND modified');
-	$record = mysqli_query($db, $sql) or die(mysqli_error($db));
-	$time = mysqli_fetch_assoc($record);
+
+	//-----------投稿を取得end-----------
+
+	
+	//-----------返信メッセージをインサート----------
+
+	//投稿を記録する
+	if ($count % 3 == 0 ) {
+
+			$randum_reply_id=rand(1,50);
+		
+			$member['id']=1;
+			$_POST['reply_id']=$randum_reply_id;
+			$_SESSION['message']=$messager;
+
+			$sql = sprintf('INSERT INTO posts SET member_id=%d, message="%s", reply_id=%d, created=NOW()',
+				
+				mysqli_real_escape_string($db, $member['id']),
+				mysqli_real_escape_string($db, htmlspecialchars($_SESSION['message'])),
+				mysqli_real_escape_string($db, htmlspecialchars($_POST['reply_id']))
+				);
+
+			// echo $sql;
+			mysqli_query($db, $sql) or die(mysqli_error($db));
+			header('Location: plofile.php');
+			exit();
+	}
+
+
+
+	//-----------返信メッセージをインサートend----------
+
+
+	//-----------ログインしている人のユーザー情報を取得-----------
+
+	// $_SESSION['id'] = 1;
+	// if (isset($_SESSION['id'])){
+
+	// 	//ログインしている人のユーザー情報を取得
+	// 	$sql = sprintf('SELECT * FROM members WHERE id=%d',
+	// 			mysqli_real_escape_string($db, $_SESSION['id'])
+	// 			);
+
+	// 	$record = mysqli_query($db, $sql) or die(mysqli_error($db));
+
+	// 	$member = mysqli_fetch_assoc($record);
+
+	// }else{
+	// 	//ログインしていない
+	// 	header('Location: login.php');
+	// 	exit();
+	// }
+
+	//-----------ログインしている人のユーザー情報を取得 end-----------
+
+
+
+	//-----------自動返信機能-----------
+	// $randum_id=rand(1,6);
+	// $sql = sprintf('SELECT * FROM posts WHERE id='.$randum_id);
+	// $record = mysqli_query($db, $sql) or die(mysqli_error($db));
+	// $table = mysqli_fetch_assoc($record);
+	// $message = $table['message'];
+
+	// $sql = sprintf('SELECT * FROM members WHERE id AND modified');
+	// $record = mysqli_query($db, $sql) or die(mysqli_error($db));
+	// $time = mysqli_fetch_assoc($record);
 
 	// echo $time['modified'];
 	// echo $message;
@@ -48,7 +102,7 @@ session_start();
 	// 	}
 	// }
 
-	//---------------------------------
+	//-----------自動返信機能 end----------
 
 ?>
 
@@ -111,10 +165,6 @@ session_start();
 					</div>
 			        </div>
 			    </div>
-<!-- 			    <div class="col-lg-2 centered">
-					<p>あなたは<?php  print $count; ?>羽目のハトです。</p>
-				</div> -->
-
 			    <div class="col-lg-4 centered">
 			    	
 			    	<span>あなたは<?php  print $count; ?>羽目のハトです。</span></br>
@@ -145,228 +195,93 @@ session_start();
         		</div>
    
         		<div class="useravatar">
-            		<img alt="" src="assets/img/hato.jpg" width="100" height="50">
+            		<a href="profile_edit.html"><img src="assets/img/<?php echo htmlspecialchars($members['plof_picture'], ENT_QUOTES, 'UTF-8'); ?>" /></a>
         		</div>
 
         		<div class="card-info">
-        			<span class="card-title">はとぽっぽ</span>
+        			<span class="plofile-name"><?php echo $member['name']; ?></span></br>
+        			<span class="plofile-message"><?php echo $member['plof_message']; ?></span>
         		</div>
 
     		</div>
     	</div>
 	</div>
 
+	<?php while($post = mysqli_fetch_assoc($posts)): ?>
+	<?php if($post['reply_id'] == 0){ ?>
+	<div class="container">
+ 	 	<div class="row">
+ 	 		<div class="col-md-2"></div>
+    		<div class="col-md-8">
+	       		<section class="comment-list">
+		    		<article class="row">
+		            	<div class="col-md-2 col-sm-2 hidden-xs">
+				            <figure class="thumbnail">
+					            <img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($post['picture']); ?>" width="100" height="100" />
+					            <figcaption class="text-center"><?php echo htmlspecialchars($post['name']); ?></figcaption>
+				            </figure>
+	           			</div>
 
-	<div class="containerRe">
-		<div style="margin-bottom: 15px;">
-			<div class="row">
-				<div class="col-lg-2"></div>
-					<div class="col-lg-3 centered">
-						<img src="assets/img/hato.jpg" width="100" height="100" alt="">
-					</div>
-					
-					<div class="col-lg-5 centered">
-						
-						<span type="text" name="nickname" class="form-control">ここに投稿されたコメントが表示されます。</span>
-						<div class="row">
-							<div class="col-lg-1"></div>
-							<div class="col-lg-10 centered">
-								<dl id="acMenu">
-									<dt><span class="glyphicon glyphicon-share-alt" style="margin-left:400px;"></span></dt>
-									<dd><textarea class="form-control" rows="">
-										<?php 
-											if($count % 3 == 0 ){
-												if($time['modified'] < $time['modified']+60*60*24*14){
-													$randum_id=rand(1,6);
-													$sql = sprintf('SELECT * FROM posts WHERE id='.$randum_id);
-													$record = mysqli_query($db, $sql) or die(mysqli_error($db));
-													$table = mysqli_fetch_assoc($record);
-													$message = $table['message'];
-													echo $message;
-												}
-											}
-									 	?>
-									 	</textarea>
-										<button class="btnr" type="button"  style="float:right;">Go!</button>
-									</dd>
-								</dl>
-							</div>
-							<div class="col-lg-1 centered">
-								</span></span></span><span class="glyphicon glyphicon-thumbs-up" style="margin-top:17px;"></span>
-							</div>
-						</div>
-						
-					</div>
-				<div class="col-lg-2"></div>
-			</div>
-		</div>
-
-		<div style="margin-bottom: 15px;">
-			<div class="row">
-				<div class="col-lg-2"></div>
-					<div class="col-lg-3 centered">
-						<img src="assets/img/hato.jpg" width="100" height="100" alt="">
-					</div>
-					
-					<div class="col-lg-5 centered">
-						
-						<span type="text" name="nickname" class="form-control">ここに投稿されたコメントが表示されます。</span>
-						<div class="row">
-							<div class="col-lg-1"></div>
-							<div class="col-lg-10 centered">
-								<dl id="acMenu">
-									<dt><span class="glyphicon glyphicon-share-alt" style="margin-left:400px;"></span></dt>
-									<dd><textarea class="form-control" rows="">
-										<?php
-											if($count % 3 == 0 ){
-												if($time['modified'] < $time['modified']+60*60*24*14){
-													$randum_id=rand(1,6);
-													$sql = sprintf('SELECT * FROM posts WHERE id='.$randum_id);
-													$record = mysqli_query($db, $sql) or die(mysqli_error($db));
-													$table = mysqli_fetch_assoc($record);
-													$message = $table['message'];
-													echo $message;
-												}
-											}
-											?>
-										</textarea>
-										<button class="btnr" type="button"  style="float:right;">Go!</button>
-									</dd>
-								</dl>
-							</div>
-							<div class="col-lg-1 centered">
-								</span></span></span><span class="glyphicon glyphicon-thumbs-up" style="margin-top:17px;"></span>
-							</div>
-						</div>
-						
-					</div>
-				<div class="col-lg-2"></div>
-			</div>
-		</div>
-
-
-		<div style="margin-bottom: 15px;">
-			<div class="row">
-				<div class="col-lg-2"></div>
-					<div class="col-lg-3 centered">
-						<img src="assets/img/hato.jpg" width="100" height="100" alt="">
-					</div>
-					
-					<div class="col-lg-5 centered">
-						
-						<span type="text" name="nickname" class="form-control">ここに投稿されたコメントが表示されます。</span>
-						<div class="row">
-							<div class="col-lg-1"></div>
-							<div class="col-lg-10 centered">
-								<dl id="acMenu">
-									<dt><span class="glyphicon glyphicon-share-alt" style="margin-left:400px;"></span></dt>
-									<dd><textarea class="form-control" rows="">
-										<?php 
-											$randum_id=rand(1,6);
-											$sql = sprintf('SELECT * FROM posts WHERE id='.$randum_id);
-											$record = mysqli_query($db, $sql) or die(mysqli_error($db));
-											$table = mysqli_fetch_assoc($record);
-											$message = $table['message'];
-											echo $message;
-										?>
-										</textarea>
-										<button class="btnr" type="button"  style="float:right;">Go!</button>
-									</dd>
-								</dl>
-							</div>
-							<div class="col-lg-1 centered">
-								</span></span></span><span class="glyphicon glyphicon-thumbs-up" style="margin-top:17px;"></span>
-							</div>
-						</div>
-						
-					</div>
-				<div class="col-lg-2"></div>
-			</div>
-		</div>
-
-
-				<div style="margin-bottom: 15px;">
-			<div class="row">
-				<div class="col-lg-2"></div>
-					<div class="col-lg-3 centered">
-						<img src="assets/img/hato.jpg" width="100" height="100" alt="">
-					</div>
-					
-					<div class="col-lg-5 centered">
-						
-						<span type="text" name="nickname" class="form-control">ここに投稿されたコメントが表示されます。</span>
-						<div class="row">
-							<div class="col-lg-1"></div>
-							<div class="col-lg-10 centered">
-								<dl id="acMenu">
-									<dt><span class="glyphicon glyphicon-share-alt" style="margin-left:400px;"></span></dt>
-									<dd><textarea class="form-control" rows="">
-										<?php 
-											$randum_id=rand(1,6);
-											$sql = sprintf('SELECT * FROM posts WHERE id='.$randum_id);
-											$record = mysqli_query($db, $sql) or die(mysqli_error($db));
-											$table = mysqli_fetch_assoc($record);
-											$message = $table['message'];
-											echo $message;
-										?>
-										</textarea>
-										<button class="btnr" type="button"  style="float:right;">Go!</button>
-									</dd>
-								</dl>
-							</div>
-							<div class="col-lg-1 centered">
-								</span></span></span><span class="glyphicon glyphicon-thumbs-up" style="margin-top:17px;"></span>
-							</div>
-						</div>
-						
-					</div>
-				<div class="col-lg-2"></div>
-			</div>
-		</div>
-
-				<div style="margin-bottom: 15px;">
-			<div class="row">
-				<div class="col-lg-2"></div>
-					<div class="col-lg-3 centered">
-						<img src="assets/img/hato.jpg" width="100" height="100" alt="">
-					</div>
-					
-					<div class="col-lg-5 centered">
-						
-						<span type="text" name="nickname" class="form-control">ここに投稿されたコメントが表示されます。</span>
-						<div class="row">
-							<div class="col-lg-1"></div>
-							<div class="col-lg-10 centered">
-								<dl id="acMenu">
-									<dt><span class="glyphicon glyphicon-share-alt" style="margin-left:400px;"></span></dt>
-									<dd><textarea class="form-control" rows="">
-										<?php 
-											$randum_id=rand(1,6);
-											$sql = sprintf('SELECT * FROM posts WHERE id='.$randum_id);
-											$record = mysqli_query($db, $sql) or die(mysqli_error($db));
-											$table = mysqli_fetch_assoc($record);
-											$message = $table['message'];
-											echo $message;
-										?>
-										</textarea>
-										<button class="btnr" type="button"  style="float:right;">Go!</button>
-									</dd>
-								</dl>
-							</div>
-							<div class="col-lg-1 centered">
-								</span></span></span><span class="glyphicon glyphicon-thumbs-up" style="margin-top:17px;"></span>
-							</div>
-						</div>
-						
-					</div>
-				<div class="col-lg-2"></div>
-			</div>
-		</div>
-
-
-		</div>
-
-	</div>
+			            <div class="col-md-10 col-sm-10">
+			            	<div class="panel panel-default arrow left">
+			                	<div class="panel-body">
+					                <header class="text-left">
+					                	<time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> Dec 16, 2014</time>
+					                </header>
+			                		<div class="comment-post">
+					                    <p>
+					                    <?php echo nl2br($post['message']); ?>
+					                    </p>
+	                				</div>
+									<form method="post" action="">
+										<div class="col-lg-10 centered">
+											<dl id="acMenu">
+												<dt><span class="glyphicon glyphicon-share-alt" style="margin-left:400px;"></span></dt>
+												<dd><textarea name="reply_message" class="form-control" rows style="display:inline-block;float:left;width:290px;margin-right:5px"></textarea>
+												    <button class="btn " type="submit" style="display:inline-block;">Go!</button>
+												    <input type="hidden" name="reply_id" value="<?php echo $post['id']; ?>" />  
+												</dd>
+											</dl>
+										</div>
+									</form>
+	            					<input type="hidden" name="reply_id" value="<?php echo $post['id']; ?>" />
+	                   				<span class="glyphicon glyphicon-thumbs-up" ></span>
+	                			</div>
+	              			</div>
+	            		</div>
+	            	</article>
+	<?php } ?>
+	<?php if($post['reply_id'] = $post['id']){ ?>
+	            	<article class="row">
+			            <div class="col-md-9 col-sm-9 col-md-offset-1 col-md-pull-1 col-sm-offset-0">
+			            	<div class="panel panel-default arrow right">
+			                	<div class="panel-heading">Reply</div>
+			                	<div class="panel-body">
+					                <header class="text-right">
+					                <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> Dec 16, 2014</time>
+					                </header>
+	                  				<div class="comment-post">
+					                    <p>
+					                      <?php echo $_SESSION['message']; ?>
+					                    </p>
+	                				</div>
+	                				<span class="glyphicon glyphicon-thumbs-up" ></span>
+	                			</div>
+	              			</div>
+	            		</div>
+			            <div class="col-md-2 col-sm-2 col-md-pull-1 hidden-xs">
+				            <figure class="thumbnail">
+					            <img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($post['picture']); ?>" width="100" height="100" />
+					            <figcaption class="text-center"><?php echo htmlspecialchars($post['name']); ?></figcaption>
+				            </figure>
+			            </div>
+					</article>
+        		</section>  	
+    		</div>
+    	</div>
+    </div>
+    <?php } ?>
+	<?php endwhile; ?>
 	
 	
 	<div id="f">

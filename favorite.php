@@ -50,15 +50,15 @@
 
 			    <div class="col-lg-4">
 		        	<div class="button1">
-			       		<button type="button" class="btn btn-default btn-lg">
+			       		<a href="index.php"><button type="button" class="btn btn-default btn-lg">
 						  <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
-						</button>
-						<button type="button" class="btn btn-default btn-lg">
+						</button></a>
+						<a href="favorite.php"><button type="button" class="btn btn-default btn-lg">
 						  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-						</button>
-						<button type="button" class="btn btn-default btn-lg">
+						</button></a>
+						<a href="plofile.php"><button type="button" class="btn btn-default btn-lg">
 						  <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-						</button>
+						</button></a>
 					</div>
 				</div>
 
