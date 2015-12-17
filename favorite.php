@@ -1,3 +1,25 @@
+<?php
+session_start();
+require('dbconnect.php');
+
+if(isset($_SESSION['id'])) {
+	$id = $_REQUEST['id'];
+	//投稿を検査する
+	$sql = sprintf('SELECT * FROM `posts` inner join `favorite` on `posts`.id = `favorite`.post_id where`favorite`.`member_id`=186');
+	$favorite_post = mysqli_query($db, $sql) or die(mysqli_error($db));
+	$table = mysqli_fetch_assoc($favorite_post);
+	//var_dump($table);
+	// if ($table['member_id'] == $_SESSION['id']) {
+	// 	//削除
+	// 	//$sql = sprintf('DELETE FROM posts WHERE id=%d', mysqli_real_escape_string($db, $id));
+	// 	$sql = sprintf('UPDATE posts SET flag=1 WHERE id=%d', mysqli_real_escape_string($db, $id));
+	// 	mysqli_query($db, $sql) or die(mysqli_error($db));
+	// }
+}
+
+header('Location: index.php');
+exit();
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -45,19 +67,22 @@
 			        </div>
 			    </div>
 
-			    <div class="col-lg-4 centered">
+			    <div class="col-lg-2 centered">
 			    </div>
 
-			    <div class="col-lg-4">
+			    <div class="col-lg-6">
 		        	<div class="button1">
-			       		<button type="button" class="btn btn-default btn-lg">
+			       		<button type="button" class="btn btn-default btn-lg" onclick="location.href='index.php'">
 						  <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
 						</button>
-						<button type="button" class="btn btn-default btn-lg">
+						<button type="button" class="btn btn-default btn-lg" onclick="location.href='favorite.php'">
 						  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
 						</button>
-						<button type="button" class="btn btn-default btn-lg">
+						<button type="button" class="btn btn-default btn-lg" onclick="location.href='profile.php'">
 						  <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+						</button>
+						<button type="button" class="btn btn-default btn-lg" onclick="location.href='logout.php'">
+  							<span class="glyphicon glyphicon-plane" aria-hidden="true"></span>
 						</button>
 					</div>
 				</div>
@@ -70,7 +95,7 @@
 
 	<!-- <div id="green"> -->
 		<div class="containerRe">
-			<div style="margin-bottom: 15px;">
+			<!-- <div style="margin-bottom: 15px;">
 				<div class="row">
 					<div class="col-lg-2"></div>
 
@@ -84,7 +109,8 @@
 					</div>
 					<div class="col-lg-2"></div>
 				</div>
-			</div>
+			</div> -->
+			while文を書く上記！！
 			<div style="margin-bottom: 15px;">
 				<div class="row">
 					<div class="col-lg-2"></div>
