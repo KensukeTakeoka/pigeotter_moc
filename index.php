@@ -26,10 +26,13 @@
 				mysqli_real_escape_string($db, htmlspecialchars($message)),
 				mysqli_real_escape_string($db, htmlspecialchars($_POST['reply_id']))
 				);
-			echo $sql;
+			//echo $sql;
 				mysqli_query($db, $sql) or die(mysqli_error($db));
 			header('Location: index.php');
 			exit();
+
+		
+			
 		}
 	}
 
@@ -39,16 +42,16 @@
 
 
 
-		//var_dump($_POST);
+		var_dump($_REQUEST);
 	//返信
-	// if (isset($_REQUEST['res'])) {
-	// 	$sql = sprintf('SELECT m.name, p.* FROM members m, posts p WHERE m.id=p.member_id AND p.id=%d ORDER BY p.created DESC',
-	// 	mysqli_real_escape_string($db, $_REQUEST['res'])
-	// 	);
-	// 	$record = mysqli_query($db, $sql) or die(mysqli_error($db));
-	// 	$table = mysqli_fetch_assoc($record);
+	if (isset($_REQUEST['reply_message'])) {
+		$sql = sprintf('SELECT m.name, p.* FROM members m, posts p WHERE m.id=p.member_id AND p.id=%d ORDER BY p.created DESC',
+		mysqli_real_escape_string($db, $_REQUEST['reply_message'])
+		);
+		$record = mysqli_query($db, $sql) or die(mysqli_error($db));
+		$table = mysqli_fetch_assoc($record);
 		
-	// }
+	}
 	
 ?>
 <!DOCTYPE html>
@@ -73,8 +76,10 @@
     <!-- アコーディオン機能 -->
     <script>
 	$(function(){
-		$("#acMenu dt").on("click", function() {
-			$(this).next().slideToggle();
+		$("#acMenu dt #reply").on("click", function() {
+			//$(this).next().slideToggle();
+			$(this).parents("dl").find("dd").slideToggle();
+			//$(this).closest("#acMenu dd").slideToggle();
 		});
 	});
 	</script>
@@ -174,12 +179,13 @@
 		</div> -->
 
 	<?php// endwhile; ?>				
-	
+
+	<br />
 	<br />
 	<br />
 
 	<?php while($post = mysqli_fetch_assoc($posts)): ?>	
-	<div class="container">
+	<div class="container" style="margin-bottom:50px">
  	 	<div class="row">
  	 	<div class="col-md-2"></div>
     	<div class="col-md-8">
@@ -187,7 +193,8 @@
     		<article class="row">
             <div class="col-md-2 col-sm-2 hidden-xs">
               <figure class="thumbnail">
-                <img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($post['picture']); ?>" width="100" height="100" />
+                <!-- <img class="img-responsive" src="member_picture/<?php //echo htmlspecialchars($post['picture']); ?>" width="100" height="100" /> -->
+                <img src="assets/img/hato2.jpg">
                 <figcaption class="text-center"><?php echo htmlspecialchars($post['name']); ?></figcaption>
               </figure>
             </div>
@@ -195,45 +202,52 @@
               <div class="panel panel-default arrow left">
                 <div class="panel-body">
                   <header class="text-left">
-                    <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> Dec 16, 2014</time>
+                    <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i><?php echo htmlspecialchars($post['created']); ?></time>
                   </header>
                   <div class="comment-post">
                     <p>
                     <?php echo nl2br($post['message']); ?>
                     </p>
                   </div>
-                  <!-- <button class="btn " type="submit" >Go!</button> -->
 					<form method="post" action="">
 							<div class="col-lg-10 centered">
 								<dl id="acMenu">
-									<dt><span class="glyphicon glyphicon-share-alt" style="margin-left:400px;"></span></dt>
+									<dt>
+										<span id="reply" class="glyphicon glyphicon-share-alt" style="margin-left:400px;" &nbsp;></span>	
+										<span class="glyphicon glyphicon-thumbs-up" ></span>									
+									</dt>
 									<dd><textarea name="reply_message" class="form-control" rows style="display:inline-block;float:left;width:290px;margin-right:5px"></textarea>
-									<!-- 	<span class="input-group-btn"></span> -->
-									    	<button class="btn " type="submit" style="display:inline-block;">Go!</button>
-									    	<input type="hidden" name="reply_id" value="<?php echo $post['id']; ?>" />
-									    
+									    <button class="btn " type="submit" style="display:inline-block;">Go!</button>
+									    <input type="hidden" name="reply_id" value="<?php echo $post['id']; ?>" />
 									</dd>
 								</dl>
 							</div>
 						</form>
-                <!--   <p class="text-right" type="submit" ><a href="#" class="btn btn-default btn-sm"><i class="fa fa-reply"></i>GO!</a></p> -->
-                  <input type="hidden" name="reply_id" value="<?php echo $post['id']; ?>" />
-                   <span class="glyphicon glyphicon-thumbs-up" ></span>
+					
+                  <input type="hidden" name="reply_id" value="<?php echo $post['id']; ?>" />                 
                 </div>
               </div>
             </div>
              </article>
+
             <article class="row">
             <div class="col-md-9 col-sm-9 col-md-offset-1 col-md-pull-1 col-sm-offset-0">
               <div class="panel panel-default arrow right">
                 <div class="panel-heading">Reply</div>
                 <div class="panel-body">
                   <header class="text-right">
-                    <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> Dec 16, 2014</time>
+                    <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i><?php echo htmlspecialchars($post['created']); ?></time>
                   </header>
                   <div class="comment-post">
                     <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    <?php //while($post = mysqli_fetch_assoc($posts)){
+                   
+	                    	if(!empty($_REQUEST['reply_message']) && $post['id']==$post['reply_id']){
+	                    		echo $post['message'];
+							}
+						//}
+					//endwhile; 
+					?>
                     </p>
                   </div>
                   <span class="glyphicon glyphicon-thumbs-up" ></span>
@@ -245,11 +259,11 @@
             </div>
             <div class="col-md-2 col-sm-2 col-md-pull-1 hidden-xs">
               <figure class="thumbnail">
-                <img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($post['picture']); ?>" width="100" height="100" />
+                <!-- <img class="img-responsive" src="member_picture/<?php //echo htmlspecialchars($post['picture']); ?>" width="100" height="100" /> -->
+                <img src="assets/img/hato2.jpg">
                 <figcaption class="text-center"><?php echo htmlspecialchars($post['name']); ?></figcaption>
               </figure>
             </div>
-
         	</section>
           	</article>
     	</div>
@@ -257,8 +271,6 @@
     </div>
 	<?php endwhile; ?>	
 		
-		
-	
 	
 	<div id="f">
 		<div class="container">
