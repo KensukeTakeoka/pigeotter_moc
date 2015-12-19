@@ -31,11 +31,12 @@ session_start();
 
 
 
-	}else{
-		//ログインしていない
-		header('Location: login.php');
-		exit();
 	}
+	// else{
+	// 	//ログインしていない
+	// 	header('Location: login.php');
+	// 	exit();
+	// }
 
 	//-----------ログインしている人のユーザー情報を取得 end-----------
 
@@ -284,7 +285,7 @@ session_start();
         		</div>
    
         		<div class="useravatar">
-            		<a href="profile_edit.html"><img src="assets/img/<?php echo htmlspecialchars($member['plof_picture'], ENT_QUOTES, 'UTF-8'); ?>" /></a>
+            		<a href="profile_edit.php"><img src="assets/img/<?php echo htmlspecialchars($member['plof_picture'], ENT_QUOTES, 'UTF-8'); ?>" /></a>
         		</div>
 
         		<div class="card-info">
