@@ -12,23 +12,66 @@ session_start();
 	fclose($fp);
 	//------------アクセスカウンタ１ end-----------
 
+
+
+	//-----------ログインしている人のユーザー情報を取得-----------
+
+	// $_SESSION['id'] = 1;
+	// echo $_SESSION['id'];
+	if (isset($_SESSION['id'])){
+
+		//ログインしている人のユーザー情報を取得
+		$sql = sprintf('SELECT * FROM members WHERE id=%d',
+				mysqli_real_escape_string($db, $_SESSION['id'])
+				);
+
+		$record = mysqli_query($db, $sql) or die(mysqli_error($db));
+
+		$member = mysqli_fetch_assoc($record);
+
+
+
+	}else{
+		//ログインしていない
+		header('Location: login.php');
+		exit();
+	}
+
+	//-----------ログインしている人のユーザー情報を取得 end-----------
+
+
+
+	//------------投稿者のデータを取得-------------
+	// $sql = sprintf('SELECT * FROM members WHERE 1');
+	// $members = mysqli_query($db, $sql) or die(mysqli_error($db));
+
+	// $member=array();
+	// while ($members = mysqli_fetch_assoc($members)) {
+	// 	$member[] = $members;
+	// }
+
+
+	//------------投稿者のデータを取得end-------------
+
+
+
 	//---------------返信メッセージを取得---------------
 	$i=1; 
+	$reply_count=1;
 	$reply_posts=array();
-	while(100>$i){
+	while($reply_count>=$i){
 		
-		$sql = sprintf('SELECT * FROM posts WHERE id=%d || reply_id=%d',
-			mysqli_real_escape_string($db, htmlspecialchars($i)),
-			mysqli_real_escape_string($db, htmlspecialchars($i))
-			);
+		$sql = sprintf('SELECT * FROM posts WHERE reply_id > 0');
+			// mysqli_real_escape_string($db, htmlspecialchars($i))
+			// mysqli_real_escape_string($db, htmlspecialchars($i))
+			// );
 
 		// echo $sql;
 
 		$reply = mysqli_query($db, $sql) or die(mysqli_error($db));
 
 			while($row = mysqli_fetch_assoc($reply)){
-				// $row = mysqli_fetch_assoc($reply);
-				$reply_pposts[]=$row;
+				$reply_posts[]=$row;
 			}
 
 		// echo $reply;
@@ -36,22 +79,18 @@ session_start();
 		$i++;
 		}
 
-		// echo $reply_pposts['message'];
-		// var_dump($reply_pposts);
+		// echo $reply_posts['message'];
+		// var_dump($reply_posts);
+		$reply_count = count($reply_posts);
+		// echo $reply_count;
 
+		$randum_reply_posts=rand(0,$reply_count);
+		// echo $randum_reply_posts;
 
-
-
-
-		// $randum_reply = mysqli_fetch_assoc($reply);
-		// var_dump($_SESSION);
-		// $table = mysqli_fetch_assoc($reply);
-		// $randum_reply = $table;
-		// echo $randum_reply;
-	
-	// $randum_reply = $randum_reply['id'];
-	// echo $randum_reply;
-
+		$reply_postss=$reply_posts[$randum_reply_posts];
+		// $_POST['message']=$reply_posts['message'];
+		// echo $_POST['message'];
+		// var_dump($reply_posts);
 
 
 	//---------------返信メッセージを取得end---------------	
@@ -59,15 +98,16 @@ session_start();
 
 
 	//-----------投稿を取得-----------
-	// $sql = sprintf('SELECT m.name, p.* FROM members m, posts p WHERE m.id=p.member_id ORDER BY p.created DESC');
-	// $posts = mysqli_query($db, $sql) or die (mysqli_error($db));
+	$sql = sprintf('SELECT m.name, p.* FROM members m, posts p WHERE m.id=p.member_id ORDER BY p.created DESC');
+	$m_posts = mysqli_query($db, $sql) or die (mysqli_error($db));
 	// var_dump($posts);
+	// var_dump($member);
 
 	// $randum_id=rand(1,45);
 	$sql = sprintf('SELECT * FROM posts WHERE 1');
 	// $record = mysqli_query($db, $sql) or die(mysqli_error($db));
 	$posts = mysqli_query($db, $sql) or die(mysqli_error($db));
-	$post = mysqli_fetch_assoc($posts);
+	// $post = mysqli_fetch_assoc($posts);
 	// $table = mysqli_fetch_assoc($record);
 	// while($table = mysqli_fetch_assoc($record)){
 	// 	$_SESSION = $table;
@@ -80,61 +120,51 @@ session_start();
 	// echo $_SESSION[$randum_message];
 	
 
-
-
 	//-----------投稿を取得end-----------
 
-	
+
 	//-----------返信メッセージをインサート----------
 
 	//投稿を記録する
+	
 	if ($count % 3 == 0 ) {
 
-			$randum_reply_id=rand(1,50);
+			$randum_reply_id=rand(1,$reply_count);
+			// echo $randum_reply_id;
 		
-			$member['id']=1;
+			$member['id']=$_SESSION['id'];
 			$_POST['reply_id']=$randum_reply_id;
+
+
+			// $sql = sprintf('SELECT * FROM posts WHERE id='.$randum_reply_id);
+			// $record = mysqli_query($db, $sql) or die(mysqli_error($db));
+			// $table = mysqli_fetch_assoc($record);
+			// $_POST['message'] = $table['message'];
+
+			// $sql = sprintf('SELECT * FROM members WHERE id AND modified');
+			// $record = mysqli_query($db, $sql) or die(mysqli_error($db));
+			// $time = mysqli_fetch_assoc($record);
+
+			// $randum_messages=$posts['$randum_reply_id'];
+			// $randum_message=$randum_messages['message'];
+			// echo $randum_message;
 			// $_SESSION['message']=$messager;
 
 			$sql = sprintf('INSERT INTO posts SET member_id=%d, message="%s", reply_id=%d, created=NOW()',
 				
 				mysqli_real_escape_string($db, $member['id']),
-				mysqli_real_escape_string($db, htmlspecialchars($randum_message)),
+				mysqli_real_escape_string($db, htmlspecialchars($reply_postss['message'])),
 				mysqli_real_escape_string($db, htmlspecialchars($_POST['reply_id']))
 				);
 
-			// echo $sql;
+			echo $sql;
 			mysqli_query($db, $sql) or die(mysqli_error($db));
 			header('Location: plofile.php');
 			exit();
 	}
 
 
-
 	//-----------返信メッセージをインサートend----------
-
-
-	//-----------ログインしている人のユーザー情報を取得-----------
-
-	// $_SESSION['id'] = 1;
-	// if (isset($_SESSION['id'])){
-
-	// 	//ログインしている人のユーザー情報を取得
-	// 	$sql = sprintf('SELECT * FROM members WHERE id=%d',
-	// 			mysqli_real_escape_string($db, $_SESSION['id'])
-	// 			);
-
-	// 	$record = mysqli_query($db, $sql) or die(mysqli_error($db));
-
-	// 	$member = mysqli_fetch_assoc($record);
-
-	// }else{
-	// 	//ログインしていない
-	// 	header('Location: login.php');
-	// 	exit();
-	// }
-
-	//-----------ログインしている人のユーザー情報を取得 end-----------
 
 
 
@@ -161,6 +191,7 @@ session_start();
 	// }
 
 	//-----------自動返信機能 end----------
+
 
 ?>
 
@@ -225,8 +256,8 @@ session_start();
 			    </div>
 			    <div class="col-lg-4 centered">
 			    	
-			    	<span>あなたは<?php  print $count; ?>羽目のハトです。</span></br>
-			    </div>
+			    	<!-- <span>あなたは<?php  print $count; ?>羽目のハトです。</span></br> -->
+				</div>
 			    <div class="col-lg-4">
 		        	<div class="button1">
 			       		<a href="index.php"><button type="button" class="btn btn-default btn-lg">
@@ -253,7 +284,7 @@ session_start();
         		</div>
    
         		<div class="useravatar">
-            		<a href="profile_edit.html"><img src="assets/img/<?php echo htmlspecialchars($members['plof_picture'], ENT_QUOTES, 'UTF-8'); ?>" /></a>
+            		<a href="profile_edit.html"><img src="assets/img/<?php echo htmlspecialchars($member['plof_picture'], ENT_QUOTES, 'UTF-8'); ?>" /></a>
         		</div>
 
         		<div class="card-info">
@@ -263,7 +294,7 @@ session_start();
 
     		</div>
     	</div>
-	</div>
+	</div> 
 
 
 	<?php while($post = mysqli_fetch_assoc($posts)): ?>
@@ -274,12 +305,12 @@ session_start();
  	 		<div class="col-md-2"></div>
     		<div class="col-md-8">
 	       		<section class="comment-list">
-	       			
+	  
 		    		<article class="row">
 		            	<div class="col-md-2 col-sm-2 hidden-xs">
 				            <figure class="thumbnail">
-					            <img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($post['picture']); ?>" width="100" height="100" />
-					            <figcaption class="text-center"><?php echo htmlspecialchars($members['name']); ?></figcaption>
+					            <img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($member['picture']); ?>" width="100" height="100" />
+					            <figcaption class="text-center"><?php echo htmlspecialchars($member['name']); ?></figcaption>
 				            </figure>
 	           			</div>
 
@@ -287,7 +318,7 @@ session_start();
 			            	<div class="panel panel-default arrow left">
 			                	<div class="panel-body">
 					                <header class="text-left">
-					                	<time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> Dec 16, 2014</time>
+					                	<time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i><?php echo $post['created'] ?></time>
 					                </header>
 			                		<div class="comment-post">
 					                    <p>
@@ -311,26 +342,24 @@ session_start();
 	              			</div>
 	            		</div>
 	            	</article>
+	<?php }else{continue;} ?>
 
-        		</section>  	
-    		</div>
-    	</div>
-    </div>	
- <?php } ?>
- 	
-	<?php //while($postR = mysqli_fetch_assoc($reply_pposts)): ?>
-<!-- 	<?php if(!isset($postR['reply_id'])){ ?>
+
+ 	<?php $j=0; ?>
+	<?php while($reply_count > $j):?>
+	<?php $reply_post =$reply_posts[$j]; ?>
+	<?php if($reply_post['reply_id'] == $post['id'] && $post['created']  < $post['created']+60*60*24*14){ ?>
 	            	<article class="row">
 			            <div class="col-md-9 col-sm-9 col-md-offset-1 col-md-pull-1 col-sm-offset-0">
 			            	<div class="panel panel-default arrow right">
 			                	<div class="panel-heading">Reply</div>
 			                	<div class="panel-body">
 					                <header class="text-right">
-					                <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> Dec 16, 2014</time>
+					                <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i><?php echo $reply_post['created'] ?></time>
 					                </header>
 	                  				<div class="comment-post">
 					                    <p>
-					                      <?php echo $reply_post['message']; ?>
+					                    	<?php echo $reply_post['message']; ?>
 					                    </p>
 	                				</div>
 	                				<span class="glyphicon glyphicon-thumbs-up" ></span>
@@ -339,21 +368,20 @@ session_start();
 	            		</div>
 			            <div class="col-md-2 col-sm-2 col-md-pull-1 hidden-xs">
 				            <figure class="thumbnail">
-					            <img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($post['picture']); ?>" width="100" height="100" />
-					            <figcaption class="text-center"><?php echo htmlspecialchars($reply_post['name']); ?></figcaption>
+					            <img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($member['picture']); ?>" width="100" height="100" />
+					            <figcaption class="text-center"><?php echo htmlspecialchars($member['name']); ?></figcaption>
 				            </figure>
 			            </div>
 					</article>
-					
+	<?php } ?>
+	<?php $j++; ?>
+	<?php endwhile; ?>			
         		</section>  	
     		</div>
     	</div>
     </div>
-   
-    	<?php } ?> -->
+ 
 	<?php endwhile; ?>
-
-	<?php //endwhile; ?>
 	
 	
 	<div id="f">
