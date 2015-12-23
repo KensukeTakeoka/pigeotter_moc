@@ -1,13 +1,15 @@
 <?php
 session_start();
 require('dbconnect.php');
-
+// var_dump($_SESSION);
+// 必ずあとで消す！！！！！！！！！！！
+$_SESSION['id']=1;
 if(isset($_SESSION['id'])) {
-	$id = $_REQUEST['id'];
+	// $id = $_REQUEST['id'];
 	//投稿を検査する
 	$sql = sprintf('SELECT * FROM `posts` inner join `favorite` on `posts`.id = `favorite`.post_id where`favorite`.`member_id`=186');
-	$favorite_post = mysqli_query($db, $sql) or die(mysqli_error($db));
-	$table = mysqli_fetch_assoc($favorite_post);
+	$favorite_posts = mysqli_query($db, $sql) or die(mysqli_error($db));
+	// $table = mysqli_fetch_assoc($favorite_post);
 	//var_dump($table);
 	// if ($table['member_id'] == $_SESSION['id']) {
 	// 	//削除
@@ -17,8 +19,7 @@ if(isset($_SESSION['id'])) {
 	// }
 }
 
-header('Location: index.php');
-exit();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -110,8 +111,32 @@ exit();
 					<div class="col-lg-2"></div>
 				</div>
 			</div> -->
-			while文を書く上記！！
-			<div style="margin-bottom: 15px;">
+			
+			<?php
+				while ($favorite_post = mysqli_fetch_assoc($favorite_posts)): 
+      				//配列として1データずつ追加保存
+      				// echo $favorite_post['message'];
+      			?>
+      			<div style="margin-bottom: 15px;">
+				<div class="row">
+					<div class="col-lg-2"></div>
+
+					<div class="col-lg-3 centered">
+						<img src="assets/img/hato.jpg" width="100" height="100" alt="">
+					</div>
+					
+					<div class="col-lg-5 centered">
+						<span type="text" name="nickname" class="form-control"><?php echo $favorite_post['message'];?></span>
+						<span class="glyphicon glyphicon-share-alt"></span><span>　　</span><span class="glyphicon glyphicon-star-empty"></span>
+					</div>
+					<div class="col-lg-2"></div>
+				</div>
+			</div>
+			<?php
+    			endwhile;
+    		?>
+
+			<!-- <div style="margin-bottom: 15px;">
 				<div class="row">
 					<div class="col-lg-2"></div>
 
@@ -175,7 +200,7 @@ exit();
 				</div>
 			</div>
 
-		</div>
+		</div> -->
 
 	<!-- </div> -->
 	
