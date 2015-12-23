@@ -62,7 +62,7 @@ session_start();
 	$reply_posts=array();
 	while($reply_count>=$i){
 		
-		$sql = sprintf('SELECT * FROM posts WHERE reply_id > 0');
+		$sql = sprintf('SELECT * FROM posts WHERE reply_id > 0  ORDER BY created DESC');
 			// mysqli_real_escape_string($db, htmlspecialchars($i))
 			// mysqli_real_escape_string($db, htmlspecialchars($i))
 			// );
@@ -99,26 +99,76 @@ session_start();
 
 
 	//-----------投稿を取得-----------
+	//------------------投稿を記録する------------------
+	if (!empty($_POST)) {
+		//messageが入っているならば下記の処理を行う(入力されていたら)
+		//var_dump($_POST['message']);
+		if ($_POST['message'] != '' || $_REQUEST['reply_message']) {
+			$member['id']=$_SESSION['id'];
+
+			if(!empty($_REQUEST['reply_message'])){
+				$message=$_REQUEST['reply_message'];
+			}
+			
+			if(!empty($_POST['message'])){
+				$message=$_POST['message'];
+			}
+
+			$sql = sprintf('INSERT INTO posts SET member_id=%d, message="%s", reply_id=%d, created=NOW()',
+				
+				mysqli_real_escape_string($db, $member['id']),
+				
+				mysqli_real_escape_string($db, htmlspecialchars($message)),
+				mysqli_real_escape_string($db, htmlspecialchars($_POST['reply_id']))
+				);
+			//echo $sql;
+				mysqli_query($db, $sql) or die(mysqli_error($db));
+			header('Location: profile.php');
+			exit();
+
+		
+			
+		}
+	}
+
+	//投稿を取得
 	$sql = sprintf('SELECT m.name, p.* FROM members m, posts p WHERE m.id=p.member_id ORDER BY p.created DESC');
-	$m_posts = mysqli_query($db, $sql) or die (mysqli_error($db));
-	// var_dump($posts);
-	// var_dump($member);
+	$posts = mysqli_query($db, $sql) or die (mysqli_error($db));
 
-	// $randum_id=rand(1,45);
-	$sql = sprintf('SELECT * FROM posts WHERE 1');
-	// $record = mysqli_query($db, $sql) or die(mysqli_error($db));
-	$posts = mysqli_query($db, $sql) or die(mysqli_error($db));
-	// $post = mysqli_fetch_assoc($posts);
-	// $table = mysqli_fetch_assoc($record);
-	// while($table = mysqli_fetch_assoc($record)){
-	// 	$_SESSION = $table;
-	// }
 
-	// var_dump($_SESSION);
-	// echo $_SESSION['message'];	
-	// $randum_message = array_rand($_SESSION['message']);
-	// $tmpArray  = $table['reply_id'];
-	// echo $_SESSION[$randum_message];
+
+		// var_dump($_REQUEST);
+	//返信
+	if (isset($_REQUEST['reply_message'])) {
+		$sql = sprintf('SELECT m.name, p.* FROM members m, posts p WHERE m.id=p.member_id AND p.id=%d ORDER BY p.created DESC',
+		mysqli_real_escape_string($db, $_REQUEST['reply_message'])
+		);
+		$record = mysqli_query($db, $sql) or die(mysqli_error($db));
+		$table = mysqli_fetch_assoc($record);
+
+	}
+
+
+	// $sql = sprintf('SELECT m.name, p.* FROM members m, posts p WHERE m.id=p.member_id ORDER BY p.created DESC');
+	// $m_posts = mysqli_query($db, $sql) or die (mysqli_error($db));
+	// // var_dump($posts);
+	// // var_dump($member);
+
+	// // $randum_id=rand(1,45);
+	// $sql = sprintf('SELECT * FROM posts WHERE 1 ORDER BY created DESC');
+	// // $record = mysqli_query($db, $sql) or die(mysqli_error($db));
+	// $posts = mysqli_query($db, $sql) or die(mysqli_error($db));
+	// // $post = mysqli_fetch_assoc($posts);
+	// // $table = mysqli_fetch_assoc($record);
+	// // while($table = mysqli_fetch_assoc($record)){
+	// // 	$_SESSION = $table;
+	// // }
+
+	// // var_dump($_SESSION);
+	// // echo $_SESSION['message'];	
+	// // $randum_message = array_rand($_SESSION['message']);
+	// // $tmpArray  = $table['reply_id'];
+	// // echo $_SESSION[$randum_message];
 	
 
 	//-----------投稿を取得end-----------
@@ -158,9 +208,9 @@ session_start();
 				mysqli_real_escape_string($db, htmlspecialchars($_POST['reply_id']))
 				);
 
-			echo $sql;
+			// echo $sql;
 			mysqli_query($db, $sql) or die(mysqli_error($db));
-			header('Location: plofile.php');
+			header('Location: profile.php');
 			exit();
 	}
 
@@ -208,7 +258,7 @@ session_start();
     <!-- カウンター -->
  	<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 
-    <title>plofile</title>
+    <title>profile</title>
 
     <!-- Bootstrap core CSS -->
     <link href="assets/css/bootstrap.css" rel="stylesheet">
@@ -251,7 +301,7 @@ session_start();
 			        </button>
 			        <div id="favo">
 			        	
-					    <h3>Plofile</h3>		
+					    <h3>Profile</h3>		
 					</div>
 			        </div>
 			    </div>
@@ -267,7 +317,7 @@ session_start();
 						<a href="favorite.php"><button type="button" class="btn btn-default btn-lg">
 						  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
 						</button></a>
-						<a href="plofile.php"><button type="button" class="btn btn-default btn-lg">
+						<a href="profile.php"><button type="button" class="btn btn-default btn-lg">
 						  <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
 						</button></a>
 					</div>
@@ -297,11 +347,14 @@ session_start();
     	</div>
 	</div> 
 
+	</br>
 
+
+<!-- 投稿 -->
 	<?php while($post = mysqli_fetch_assoc($posts)): ?>
 	<?php //var_dump($post); ?>
 	<?php if($post['member_id'] == 1 && $post['reply_id'] == 0){ ?>
-	<div class="container">
+	<div class="container" style="margin-bottom:50px;">
  	 	<div class="row">
  	 		<div class="col-md-2"></div>
     		<div class="col-md-8">
@@ -310,7 +363,7 @@ session_start();
 		    		<article class="row">
 		            	<div class="col-md-2 col-sm-2 hidden-xs">
 				            <figure class="thumbnail">
-					            <img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($member['picture']); ?>" width="100" height="100" />
+					            <img class="img-responsive" src="<?php if(!isset($member['picture'])){ echo 'assets/img/hato2.jpg'; }else{ echo htmlspecialchars($member['picture']);} ?>" width="100" height="100" />
 					            <figcaption class="text-center"><?php echo htmlspecialchars($member['name']); ?></figcaption>
 				            </figure>
 	           			</div>
@@ -319,7 +372,7 @@ session_start();
 			            	<div class="panel panel-default arrow left">
 			                	<div class="panel-body">
 					                <header class="text-left">
-					                	<time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i><?php echo $post['created'] ?></time>
+					                	<time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i><?php echo $post['created']; ?></time>
 					                </header>
 			                		<div class="comment-post">
 					                    <p>
@@ -345,8 +398,42 @@ session_start();
 	            	</article>
 	<?php }else{continue;} ?>
 
+<!-- 返信 -->
+ 	<?php $k=0; ?>
+	<?php while($table_count > $k):?>
+	<?php $table =$table[$k]; ?>
+	<?php if(!empty($_REQUEST['reply_message']) && $table['reply_id'] == $post['id']){ ?>
+	            	<article class="row">
+			            <div class="col-md-9 col-sm-9 col-md-offset-1 col-md-pull-1 col-sm-offset-0">
+			            	<div class="panel panel-default arrow right">
+			                	<div class="panel-heading">Reply</div>
+			                	<div class="panel-body">
+					                <header class="text-right">
+					                	<time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i><?php echo $_REQUEST['created']; ?></time>
+					                </header>
+	                  				<div class="comment-post">
+					                    <p>
+					                    	<?php echo $_REQUEST['reply_message']; ?>
+					                    </p>
+	                				</div>
+	                				<span class="glyphicon glyphicon-thumbs-up" ></span>
+	                			</div>
+	              			</div>
+	            		</div>
+			            <div class="col-md-2 col-sm-2 col-md-pull-1 hidden-xs">
+				            <figure class="thumbnail">
+					            <img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($_REQUEST['picture']); ?>" width="100" height="100" />
+					            <figcaption class="text-center"><?php echo htmlspecialchars($_REQUEST['name']); ?></figcaption>
+				            </figure>
+			            </div>
+					</article>
+	<?php } ?>
+	<?php $k++; ?>
+	<?php endwhile; ?>
 
- 	<?php $j=0; ?>
+
+<!-- 自動返信 -->
+	<?php $j=0; ?>
 	<?php while($reply_count > $j):?>
 	<?php $reply_post =$reply_posts[$j]; ?>
 	<?php if($reply_post['reply_id'] == $post['id'] && $post['created']  < $post['created']+60*60*24*14){ ?>
@@ -356,7 +443,7 @@ session_start();
 			                	<div class="panel-heading">Reply</div>
 			                	<div class="panel-body">
 					                <header class="text-right">
-					                <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i><?php echo $reply_post['created'] ?></time>
+					                <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i><?php echo $reply_post['created']; ?></time>
 					                </header>
 	                  				<div class="comment-post">
 					                    <p>
@@ -376,7 +463,11 @@ session_start();
 					</article>
 	<?php } ?>
 	<?php $j++; ?>
-	<?php endwhile; ?>			
+	<?php endwhile; ?>
+
+
+
+
         		</section>  	
     		</div>
     	</div>
