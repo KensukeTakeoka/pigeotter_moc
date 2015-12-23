@@ -127,7 +127,7 @@ if(isset($_SESSION['id'])) {
 					
 					<div class="col-lg-5 centered">
 						<span type="text" name="nickname" class="form-control"><?php echo $favorite_post['message'];?></span>
-						<span class="glyphicon glyphicon-share-alt"></span><span>　　</span><span class="glyphicon glyphicon-thumbs-up"></span>
+						<span class="glyphicon glyphicon-share-alt"></span><span>　　</span><span class="glyphicon glyphicon-star-empty"></span>
 					</div>
 					<div class="col-lg-2"></div>
 				</div>
