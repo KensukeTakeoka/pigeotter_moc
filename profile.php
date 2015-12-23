@@ -208,7 +208,7 @@ session_start();
 				mysqli_real_escape_string($db, htmlspecialchars($_POST['reply_id']))
 				);
 
-			echo $sql;
+			// echo $sql;
 			mysqli_query($db, $sql) or die(mysqli_error($db));
 			header('Location: profile.php');
 			exit();
@@ -363,7 +363,7 @@ session_start();
 		    		<article class="row">
 		            	<div class="col-md-2 col-sm-2 hidden-xs">
 				            <figure class="thumbnail">
-					            <img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($member['picture']); ?>" width="100" height="100" />
+					            <img class="img-responsive" src="<?php if(!isset($member['picture'])){ echo 'assets/img/hato2.jpg'; }else{ echo htmlspecialchars($member['picture']);} ?>" width="100" height="100" />
 					            <figcaption class="text-center"><?php echo htmlspecialchars($member['name']); ?></figcaption>
 				            </figure>
 	           			</div>

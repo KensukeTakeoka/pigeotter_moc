@@ -8,7 +8,8 @@ require('dbconnect.php');
 //   print('正しく記入されています');
 // }
 
-var_dump($_POST);if (!empty($_POST)) {
+// var_dump($_POST);
+if (!empty($_POST)) {
   //登録処理をする
   $sql = sprintf('INSERT INTO members SET name="%s", email="%s",password="%s",created="%s"',
     mysqli_real_escape_string($db, $_POST['name']),

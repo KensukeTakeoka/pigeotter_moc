@@ -32,11 +32,11 @@ session_start();
 
 
 	}
-	else{
-		//ログインしていない
-		header('Location: login.php');
-		exit();
-	}
+	// else{
+	// 	//ログインしていない
+	// 	header('Location: login.php');
+	// 	exit();
+	// }
 
 	//-----------ログインしている人のユーザー情報を取得 end-----------
 
@@ -180,41 +180,41 @@ session_start();
 
 	//投稿を記録する
 	
-	// if ($count % 3 == 0 ) {
+	if ($count % 3 == 0 ) {
 
-	// 		$randum_reply_id=rand(1,$reply_count);
-	// 		// echo $randum_reply_id;
+			$randum_reply_id=rand(1,$reply_count);
+			// echo $randum_reply_id;
 		
-	// 		$member['id']=$_SESSION['id'];
-	// 		// $_POST['reply_id']=$randum_reply_id;
+			$member['id']=$_SESSION['id'];
+			// $_POST['reply_id']=$randum_reply_id;
 
 
-	// 		// $sql = sprintf('SELECT * FROM posts WHERE id='.$randum_reply_id);
-	// 		// $record = mysqli_query($db, $sql) or die(mysqli_error($db));
-	// 		// $table = mysqli_fetch_assoc($record);
-	// 		// $_POST['message'] = $table['message'];
+			// $sql = sprintf('SELECT * FROM posts WHERE id='.$randum_reply_id);
+			// $record = mysqli_query($db, $sql) or die(mysqli_error($db));
+			// $table = mysqli_fetch_assoc($record);
+			// $_POST['message'] = $table['message'];
 
-	// 		// $sql = sprintf('SELECT * FROM members WHERE id AND modified');
-	// 		// $record = mysqli_query($db, $sql) or die(mysqli_error($db));
-	// 		// $time = mysqli_fetch_assoc($record);
+			// $sql = sprintf('SELECT * FROM members WHERE id AND modified');
+			// $record = mysqli_query($db, $sql) or die(mysqli_error($db));
+			// $time = mysqli_fetch_assoc($record);
 
-	// 		// $randum_messages=$posts['$randum_reply_id'];
-	// 		// $randum_message=$randum_messages['message'];
-	// 		// echo $randum_message;
-	// 		// $_SESSION['message']=$messager;
+			// $randum_messages=$posts['$randum_reply_id'];
+			// $randum_message=$randum_messages['message'];
+			// echo $randum_message;
+			// $_SESSION['message']=$messager;
 
-	// 		$sql = sprintf('INSERT INTO posts SET member_id=%d, message="%s", reply_id=%d, created=NOW()',
+			$sql = sprintf('INSERT INTO posts SET member_id=%d, message="%s", reply_id=%d, created=NOW()',
 				
-	// 			mysqli_real_escape_string($db, $member['id']),
-	// 			mysqli_real_escape_string($db, htmlspecialchars($reply_postss['message'])),
-	// 			mysqli_real_escape_string($db, htmlspecialchars($randum_reply_id))
-	// 			);
+				mysqli_real_escape_string($db, $member['id']),
+				mysqli_real_escape_string($db, htmlspecialchars($reply_postss['message'])),
+				mysqli_real_escape_string($db, htmlspecialchars($randum_reply_id))
+				);
 
-	// 		echo $sql;
-	// 		mysqli_query($db, $sql) or die(mysqli_error($db));
-	// 		header('Location: plofile index.php');
-	// 		exit();
-	// }
+			// echo $sql;
+			mysqli_query($db, $sql) or die(mysqli_error($db));
+			header('Location: index.php');
+			exit();
+	}
 
 
 	//-----------返信メッセージをインサートend----------
@@ -299,6 +299,11 @@ session_start();
 			            <span class="icon-bar"></span>
 			          </button>
 			          <a class="navbar-brand" href="https://suzuri.jp/nemuke/products" TARGET="_blank"><img src="assets/img/hato.jpg" width="70" height="70" ></a>
+			            	<div class="panel panel-default arrow left">
+			                	<!-- <div class="panel-body"> -->
+			          <span>あなたは<?php  print $count; ?>羽目のハトです。</span>
+			        </div>
+			        <!-- </div> -->
 			        </div>
 			    </div>
 
@@ -348,7 +353,7 @@ session_start();
 		    		<article class="row">
 		            	<div class="col-md-2 col-sm-2 hidden-xs">
 				            <figure class="thumbnail">
-					            <img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($member['picture']); ?>" width="100" height="100" />
+					            <img class="img-responsive" src="<?php if(!isset($member['picture'])){ echo 'assets/img/hato2.jpg'; }else{ echo htmlspecialchars($member['picture']);} ?>" width="100" height="100" />
 					            <figcaption class="text-center"><?php echo htmlspecialchars($member['name']); ?></figcaption>
 				            </figure>
 	           			</div>
@@ -368,7 +373,8 @@ session_start();
 										<div class="col-lg-10 centered">
 											<dl id="acMenu">
 												<dt><span class="glyphicon glyphicon-share-alt" style="margin-left:400px;"></span></dt>
-												<dd><textarea name="reply_message" class="form-control" rows style="display:inline-block;float:left;width:290px;margin-right:5px"></textarea>
+												<dd>
+													<textarea name="reply_message" class="form-control1" rows style="display:inline-block;float:left;width:400px;margin-right:5px"></textarea>
 												    <button class="btn " type="submit" style="display:inline-block;">Go!</button>
 												    <input type="hidden" name="reply_id" value="<?php echo $post['id']; ?>" />  
 												</dd>
@@ -377,6 +383,47 @@ session_start();
 									</form>
 	            					<input type="hidden" name="reply_id" value="<?php echo $post['id']; ?>" />
 	                   				<span class="glyphicon glyphicon-thumbs-up" ></span>
+
+								<!-- 返信 -->
+									<dl id="acMenu">
+										<dt><span style="margin-left:90%;">Re</span></dt>
+										<dd>
+										<?php $j=0; ?>
+										<?php while($reply_count > $j):?>
+										<?php $reply_post =$reply_posts[$j]; ?>
+										<?php if($reply_post['reply_id'] == $post['id'] && $post['created']  < $post['created']+60*60*24*14){ ?>
+
+										    <article class="row">
+												<div class="col-md-9 col-sm-9 col-md-offset-1 col-md-pull-1 col-sm-offset-0">
+												    <div class="panel panel-default arrow right">
+												        <div class="panel-heading">Reply</div>
+												        <div class="panel-body">
+														    <header class="text-right">
+														        <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i><?php echo $reply_post['created']; ?></time>
+														    </header>
+										                  	<div class="comment-post">
+														        <p>
+														            <?php echo $reply_post['message']; ?>
+														        </p>
+										                	</div>
+										                	<span class="glyphicon glyphicon-thumbs-up" ></span>
+										                </div>
+										            </div>
+												</div>
+												<div class="col-md-2 col-sm-2 col-md-pull-1 hidden-xs">
+													<figure class="thumbnail">
+														<img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($member['picture']); ?>" width="100" height="100" />
+														<figcaption class="text-center"><?php echo htmlspecialchars($member['name']); ?></figcaption>
+													</figure>
+												</div>
+											</article>
+
+										<?php } ?>
+										<?php $j++; ?>
+										<?php endwhile; ?>
+										
+										</dd>
+									</dl>
 	                			</div>
 	              			</div>
 	            		</div>
@@ -384,10 +431,13 @@ session_start();
 	<?php }else{continue;} ?>
 
 <!-- 返信 -->
+
  	<?php $k=0; ?>
 	<?php while($table_count > $k):?>
 	<?php $table =$table[$k]; ?>
 	<?php if(!empty($_REQUEST['reply_message']) && $table['reply_id'] == $post['id']){ ?>
+
+	
 	            	<article class="row">
 			            <div class="col-md-9 col-sm-9 col-md-offset-1 col-md-pull-1 col-sm-offset-0">
 			            	<div class="panel panel-default arrow right">
@@ -396,11 +446,13 @@ session_start();
 					                <header class="text-right">
 					                	<time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i><?php echo $_REQUEST['created']; ?></time>
 					                </header>
+					                
 	                  				<div class="comment-post">
 					                    <p>
 					                    	<?php echo $_REQUEST['reply_message']; ?>
 					                    </p>
 	                				</div>
+	                				
 	                				<span class="glyphicon glyphicon-thumbs-up" ></span>
 	                			</div>
 	              			</div>
@@ -412,43 +464,13 @@ session_start();
 				            </figure>
 			            </div>
 					</article>
+	
+	
 	<?php } ?>
 	<?php $k++; ?>
 	<?php endwhile; ?>
 
 
-<!-- 自動返信 -->
-	<?php $j=0; ?>
-	<?php while($reply_count > $j):?>
-	<?php $reply_post =$reply_posts[$j]; ?>
-	<?php if($reply_post['reply_id'] == $post['id'] && $post['created']  < $post['created']+60*60*24*14){ ?>
-	            	<article class="row">
-			            <div class="col-md-9 col-sm-9 col-md-offset-1 col-md-pull-1 col-sm-offset-0">
-			            	<div class="panel panel-default arrow right">
-			                	<div class="panel-heading">Reply</div>
-			                	<div class="panel-body">
-					                <header class="text-right">
-					                <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i><?php echo $reply_post['created']; ?></time>
-					                </header>
-	                  				<div class="comment-post">
-					                    <p>
-					                    	<?php echo $reply_post['message']; ?>
-					                    </p>
-	                				</div>
-	                				<span class="glyphicon glyphicon-thumbs-up" ></span>
-	                			</div>
-	              			</div>
-	            		</div>
-			            <div class="col-md-2 col-sm-2 col-md-pull-1 hidden-xs">
-				            <figure class="thumbnail">
-					            <img class="img-responsive" src="member_picture/<?php echo htmlspecialchars($member['picture']); ?>" width="100" height="100" />
-					            <figcaption class="text-center"><?php echo htmlspecialchars($member['name']); ?></figcaption>
-				            </figure>
-			            </div>
-					</article>
-	<?php } ?>
-	<?php $j++; ?>
-	<?php endwhile; ?>
 
 
 
